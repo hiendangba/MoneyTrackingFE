@@ -1,0 +1,16 @@
+@layer mui, app;
+
+@layer app {
+  html {
+    min-width: 320px;
+  }
+
+  body {
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background: #ffd8be;
+    color: #7a2e13;
+  }
+}
