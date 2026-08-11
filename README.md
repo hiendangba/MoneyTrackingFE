@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Money Tracking Frontend
 
-## Getting Started
+Frontend sử dụng Next.js App Router, React, TypeScript và Tailwind CSS. Mã nguồn được tổ chức theo feature-first để route chỉ ghép màn hình, nghiệp vụ nằm trong feature và phần dùng chung nằm trong `shared`.
 
-First, run the development server:
+## Chạy dự án
 
 ```bash
+npm install
+copy .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+API Gateway local mặc định chạy tại `http://localhost:8080`. Có thể đổi `NEXT_PUBLIC_API_BASE_URL` trong `.env.local`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Kiểm tra
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
 
-## Learn More
+## Cấu trúc
 
-To learn more about Next.js, take a look at the following resources:
+```text
+src/
+├── app/                     # Route, metadata và layout của Next.js
+│   └── (auth)/
+│       ├── login/page.tsx
+│       ├── register/page.tsx
+│       └── layout.tsx
+├── features/
+│   └── auth/                # UI và hành vi thuộc nghiệp vụ xác thực
+│       ├── components/
+│       └── index.ts         # Public API của feature
+├── shared/
+│   ├── api/                 # HTTP client, API error và CSRF helper
+│   ├── config/              # Kiểm tra biến môi trường bằng Zod
+│   ├── i18n/                # Translation key, fallback và resolver
+│   └── ui/form/             # Component form dùng chung
+└── test/                    # Thiết lập test dùng chung
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`(auth)` là Route Group nên URL vẫn là `/login` và `/register`. Page và layout giữ vai trò Server Component; chỉ form có state/event handler mới dùng Client Component.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Quy tắc phụ thuộc
 
-## Deploy on Vercel
+Chiều phụ thuộc bắt buộc là:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+app → features → shared
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `app` import feature qua public entrypoint, ví dụ `@/features/auth`.
+- Feature không import `app` hoặc feature khác.
+- `shared` không phụ thuộc `app` hoặc `features`.
+- Các module shared có public entrypoint riêng như `@/shared/api`, `@/shared/i18n` và `@/shared/ui/form`; không deep-import từ bên ngoài module.
+
+ESLint kiểm tra các ranh giới này. Chỉ tạo feature hoặc shared module khi đã có mã nguồn thực sự cần sử dụng, không tạo thư mục placeholder.
+
+## API foundation
+
+`apiRequest<T>()` sử dụng native `fetch`, gửi cookie bằng `credentials: "include"`, hỗ trợ JSON, `AbortSignal`, CSRF header và chuẩn hóa lỗi Gateway thành `ApiError`. `getCsrfToken()` lấy token từ `/api/auth/csrf`.
+
+Form login/register hiện vẫn chỉ mô phỏng submit; chưa gọi API, refresh token hoặc retry request.

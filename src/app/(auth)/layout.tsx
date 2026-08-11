@@ -1,6 +1,10 @@
-import { AuthShell } from "@/components/auth/auth-shell";
 import type { ReactNode } from "react";
+import { AuthShell } from "@/features/auth";
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
+type AuthLayoutProps = {
+  children: ReactNode;
+};
+
+export default function AuthLayout({ children }: AuthLayoutProps) {
   return <AuthShell>{children}</AuthShell>;
 }
