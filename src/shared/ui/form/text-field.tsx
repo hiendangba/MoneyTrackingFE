@@ -35,18 +35,17 @@ export function TextField({
       <input
         aria-describedby={descriptionId}
         aria-invalid={error ? true : undefined}
-        className={`${fieldControlClassName} ${
-          error
-            ? "border-red-500 focus:border-red-500 focus:ring-red-500/10"
-            : ""
-        }`}
+        className={`${fieldControlClassName} ${error
+          ? "border-red-500 focus:border-yellow-500 focus:ring-red-500/10"
+          : ""
+          }`}
         id={id}
         {...inputProps}
       />
 
       {description ? (
         <p
-          className={`m-0 text-xs ${error ? "text-red-600" : "text-muted"}`}
+          className={`m-0 text-xs ${error ? "text-red-500" : "text-muted"}`}
           id={descriptionId}
         >
           {description}

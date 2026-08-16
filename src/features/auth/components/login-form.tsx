@@ -1,18 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { type SubmitEvent } from "react";
 import { CheckboxField, TextField } from "@/shared/ui/form";
 import { t, TranslationKey } from "@/shared/i18n";
 import { AuthDivider } from "./auth-divider";
 import { GoogleButton } from "./google-button";
+import { useAuthNotification } from "./auth-notification-context";
 
 export function LoginForm() {
-  const [feedback, setFeedback] = useState("");
+  const { notify } = useAuthNotification();
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setFeedback(t(TranslationKey.AuthLoginFeedback));
+  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    notify(t(TranslationKey.AuthLoginSubmit));
   }
 
   return (
@@ -69,15 +70,6 @@ export function LoginForm() {
         >
           {t(TranslationKey.AuthLoginSubmit)}
         </button>
-
-        {feedback ? (
-          <p
-            className="m-0 rounded-[10px] bg-brand-100 px-3 py-2.5 text-[13px] leading-6 text-[#6d330d]"
-            role="status"
-          >
-            {feedback}
-          </p>
-        ) : null}
       </form>
 
       <p className="mt-5 text-center text-sm text-muted">
@@ -90,5 +82,6 @@ export function LoginForm() {
         </Link>
       </p>
     </div>
+
   );
 }
