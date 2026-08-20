@@ -13,12 +13,7 @@ export class ApiError extends Error {
   readonly code: number;
   readonly response?: ApiErrorResponse;
 
-  constructor(
-    status: number,
-    code: number,
-    message: string,
-    response?: ApiErrorResponse,
-  ) {
+  constructor(status: number, code: number, message: string, response?: ApiErrorResponse) {
     super(message);
     this.name = "ApiError";
     this.status = status;
@@ -28,23 +23,14 @@ export class ApiError extends Error {
 }
 
 export async function createApiError(response: Response): Promise<ApiError> {
-  const fallbackMessage = `Request failed with status ${response.status}`;
-
   try {
-    const payload: unknown = await response.json();
-    const parsed = apiErrorResponseSchema.safeParse(payload);
-
+    const parsed = apiErrorResponseSchema.safeParse(await response.json());
     if (parsed.success) {
-      return new ApiError(
-        response.status,
-        parsed.data.code,
-        parsed.data.message,
-        parsed.data,
-      );
+      return new ApiError(response.status, parsed.data.code, parsed.data.message, parsed.data);
     }
   } catch {
-    // The fallback below intentionally hides malformed or non-JSON responses.
+    // Use the HTTP status when the backend does not return valid JSON.
   }
 
-  return new ApiError(response.status, 0, fallbackMessage);
+  return new ApiError(response.status, 0, `Request failed with status ${response.status}`);
 }

@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@keyframes notification-fade-out {
+  0%,
+  60% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 @theme {
   --color-brand-50: #fff9f4;
   --color-brand-100: #ffedd5;

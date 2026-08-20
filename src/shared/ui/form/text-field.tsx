@@ -10,6 +10,7 @@ type TextFieldProps = Omit<ComponentPropsWithoutRef<"input">, "id"> & {
   labelAction?: ReactNode;
   helperText?: string;
   error?: string;
+  endAdornment?: ReactNode;
 };
 
 export function TextField({
@@ -18,6 +19,7 @@ export function TextField({
   labelAction,
   helperText,
   error,
+  endAdornment,
   ...inputProps
 }: TextFieldProps) {
   const description = error ?? helperText;
@@ -32,16 +34,23 @@ export function TextField({
         {labelAction}
       </div>
 
-      <input
-        aria-describedby={descriptionId}
-        aria-invalid={error ? true : undefined}
-        className={`${fieldControlClassName} ${error
-          ? "border-red-500 focus:border-yellow-500 focus:ring-red-500/10"
-          : ""
-          }`}
-        id={id}
-        {...inputProps}
-      />
+      <div className="relative">
+        <input
+          aria-describedby={descriptionId}
+          aria-invalid={error ? true : undefined}
+          className={`${fieldControlClassName} ${error
+            ? "border-red-500 focus:border-yellow-500 focus:ring-red-500/10"
+            : ""
+            } ${endAdornment ? "pr-16" : ""}`}
+          id={id}
+          {...inputProps}
+        />
+        {endAdornment ? (
+          <div className="absolute inset-y-0 right-3 flex items-center">
+            {endAdornment}
+          </div>
+        ) : null}
+      </div>
 
       {description ? (
         <p

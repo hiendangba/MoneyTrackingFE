@@ -1,8 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Notification, NotificationVariant } from "@/shared/ui/notification";
-import { AuthNotificationProvider, useAuthNotification } from "./auth-notification-context";
 import { AppFooter, AppHeader } from "@/shared/ui/layout";
 
 type AuthShellProps = {
@@ -13,7 +11,6 @@ type AuthShellProps = {
 
 export function AuthShell({ children }: AuthShellProps) {
   return (
-    <AuthNotificationProvider>
       <main className="min-h-dvh bg-brand-50 px-5 py-5 text-ink sm:px-6 lg:px-8">
         <section className="mx-auto flex min-h-[calc(100dvh-40px)] w-full max-w-[560px] flex-col">
           <header className="shrink-0">
@@ -29,22 +26,6 @@ export function AuthShell({ children }: AuthShellProps) {
           <AppFooter />
         </section>
 
-        <AuthNotification />
       </main>
-    </AuthNotificationProvider>
-  );
-}
-
-function AuthNotification() {
-  const { feedback, clearNotification } = useAuthNotification();
-  if (!feedback) return null;
-
-  return (
-    <Notification
-      message={feedback}
-      onClose={clearNotification}
-      title="Đăng nhập"
-      variant={NotificationVariant.Success}
-    />
   );
 }

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { CheckboxField, TextField } from "@/shared/ui/form";
+import { Button } from "@/shared/ui/button";
 import { t, TranslationKey } from "@/shared/i18n";
 import { AuthDivider } from "./auth-divider";
 import { GoogleButton } from "./google-button";
@@ -87,12 +88,7 @@ export function RegisterForm() {
           required
         />
 
-        <button
-          className="flex min-h-12 w-full items-center justify-center rounded-xl bg-brand-500 px-4 py-2.5 font-bold text-white transition hover:-translate-y-px hover:bg-brand-600 focus-visible:ring-4 focus-visible:ring-brand-500/20 focus-visible:outline-none"
-          type="submit"
-        >
-          {t(TranslationKey.AuthRegisterSubmit)}
-        </button>
+        <Button type="submit" label={t(TranslationKey.AuthRegisterSubmit)} />
 
         {feedback ? (
           <p

@@ -1,19 +1,44 @@
 "use client";
 
 import Link from "next/link";
-import { type SubmitEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import { CheckboxField, TextField } from "@/shared/ui/form";
+import { Button } from "@/shared/ui/button";
 import { t, TranslationKey } from "@/shared/i18n";
 import { AuthDivider } from "./auth-divider";
 import { GoogleButton } from "./google-button";
-import { useAuthNotification } from "./auth-notification-context";
+import { useNotification } from "@/shared/ui/notification/notification-context";
+import { ApiError } from "@/shared/api";
+import { NotificationVariant } from "@/shared/ui/notification";
+import { login } from "../api/auth-api";
+import { Eye, EyeClosed } from "lucide-react";
+import {
+  validateLoginForm,
+  type LoginFormErrors,
+} from "../validation/login-validation";
 
 export function LoginForm() {
-  const { notify } = useAuthNotification();
+  const { notify } = useNotification();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<LoginFormErrors>({});
 
-  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    notify(t(TranslationKey.AuthLoginSubmit));
+    const nextErrors = validateLoginForm({ email, password });
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
+
+    try {
+      const response = await login({ email: email.trim(), password });
+      notify(response.message, NotificationVariant.Success);
+    } catch (error) {
+      notify(
+        error instanceof ApiError ? error.message : "Đăng nhập thất bại",
+        NotificationVariant.Error,
+      );
+    }
   }
 
   return (
@@ -33,43 +58,60 @@ export function LoginForm() {
       <GoogleButton />
       <AuthDivider />
 
-      <form className="grid gap-3.5" onSubmit={handleSubmit}>
+      <form className="grid gap-3.5" noValidate onSubmit={handleSubmit}>
         <TextField
           autoComplete="email"
           id="email"
           label={t(TranslationKey.CommonEmail)}
           name="email"
+          onChange={(event) => setEmail(event.target.value)}
           placeholder="ban@example.com"
-          required
           type="email"
+          value={email}
+          error={errors.email}
         />
 
         <TextField
           autoComplete="current-password"
           id="password"
           label={t(TranslationKey.CommonPassword)}
-          labelAction={
-            <Link href="#forgot-password">
-              {t(TranslationKey.AuthForgotPassword)}
-            </Link>
-          }
           name="password"
+          onChange={(event) => setPassword(event.target.value)}
+          endAdornment={
+            <button
+              aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+              className="text-muted transition hover:text-ink"
+              onClick={() => setShowPassword((visible) => !visible)}
+              type="button"
+            >
+              {showPassword ? (
+                <EyeClosed aria-hidden="true" className="size-7" />
+              ) : (
+                <Eye aria-hidden="true" className="size-7" />
+              )}
+            </button>
+          }
           placeholder="Nhập mật khẩu"
-          required
-          type="password"
+          type={showPassword ? "text" : "password"}
+          value={password}
+          error={errors.password}
         />
+
+        <div className="mt-1 text-right text-sm">
+          <Link
+            className="font-semibold text-brand-600 hover:text-brand-500"
+            href="#forgot-password"
+          >
+            {t(TranslationKey.AuthForgotPassword)}
+          </Link>
+        </div>
 
         <CheckboxField
           id="remember"
           label={t(TranslationKey.AuthRememberLogin)}
         />
 
-        <button
-          className="flex min-h-12 w-full items-center justify-center rounded-xl bg-brand-500 px-4 py-2.5 font-bold text-white transition hover:-translate-y-px hover:bg-brand-600 focus-visible:ring-4 focus-visible:ring-brand-500/20 focus-visible:outline-none"
-          type="submit"
-        >
-          {t(TranslationKey.AuthLoginSubmit)}
-        </button>
+        <Button type="submit" label={t(TranslationKey.AuthLoginSubmit)} />
       </form>
 
       <p className="mt-5 text-center text-sm text-muted">

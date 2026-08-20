@@ -20,8 +20,8 @@ const variantStyles: Record<
   { container: string; icon: string; label: string; symbol: string }
 > = {
   success: {
-    container: "border-emerald-200 bg-emerald-50 text-emerald-950",
-    icon: "bg-emerald-100 text-emerald-700",
+    container: "border-emerald-400 bg-emerald-200 text-emerald-950",
+    icon: "bg-emerald-300 text-emerald-800",
     label: "Thành công",
     symbol: "✓",
   },
@@ -32,8 +32,8 @@ const variantStyles: Record<
     symbol: "!",
   },
   error: {
-    container: "border-red-200 bg-red-50 text-red-950",
-    icon: "bg-red-100 text-red-700",
+    container: "border-red-400 bg-red-200 text-black",
+    icon: "bg-red-300 text-black",
     label: "Lỗi",
     symbol: "×",
   },
