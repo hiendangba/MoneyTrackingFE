@@ -25,6 +25,13 @@ export const vietnameseTranslations: Record<TranslationKey, string> = {
   [TranslationKey.AuthRegisterFeedback]: "Biểu mẫu hợp lệ. Bước tiếp theo là kết nối API đăng ký.",
   [TranslationKey.AuthAlreadyHaveAccount]: "Đã có tài khoản?",
   [TranslationKey.AuthLoginLink]: "Đăng nhập",
+  [TranslationKey.AuthForgotPasswordEyebrow]: "Khôi phục truy cập",
+  [TranslationKey.AuthForgotPasswordTitle]: "Quên mật khẩu",
+  [TranslationKey.AuthForgotPasswordSubtitle]: "Nhập email đã đăng ký để nhận hướng dẫn đặt lại mật khẩu.",
+  [TranslationKey.AuthForgotPasswordSubmit]: "Gửi liên kết đặt lại",
+  [TranslationKey.AuthForgotPasswordSubmitting]: "Đang gửi...",
+  [TranslationKey.AuthForgotPasswordFallbackError]: "Không thể gửi yêu cầu lúc này. Vui lòng thử lại.",
+  [TranslationKey.AuthBackToLogin]: "Quay lại đăng nhập",
   [TranslationKey.CommonEmail]: "Email",
   [TranslationKey.CommonPassword]: "Mật khẩu",
 };

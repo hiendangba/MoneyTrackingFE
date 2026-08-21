@@ -23,6 +23,13 @@ export enum TranslationKey {
   AuthRegisterFeedback = "auth.registerFeedback",
   AuthAlreadyHaveAccount = "auth.alreadyHaveAccount",
   AuthLoginLink = "auth.loginLink",
+  AuthForgotPasswordEyebrow = "auth.forgotPasswordEyebrow",
+  AuthForgotPasswordTitle = "auth.forgotPasswordTitle",
+  AuthForgotPasswordSubtitle = "auth.forgotPasswordSubtitle",
+  AuthForgotPasswordSubmit = "auth.forgotPasswordSubmit",
+  AuthForgotPasswordSubmitting = "auth.forgotPasswordSubmitting",
+  AuthForgotPasswordFallbackError = "auth.forgotPasswordFallbackError",
+  AuthBackToLogin = "auth.backToLogin",
   CommonEmail = "common.email",
   CommonPassword = "common.password",
 }

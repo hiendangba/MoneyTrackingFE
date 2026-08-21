@@ -100,7 +100,7 @@ export function LoginForm() {
         <div className="mt-1 text-right text-sm">
           <Link
             className="font-semibold text-brand-600 hover:text-brand-500"
-            href="#forgot-password"
+            href="/forgot-password"
           >
             {t(TranslationKey.AuthForgotPassword)}
           </Link>
