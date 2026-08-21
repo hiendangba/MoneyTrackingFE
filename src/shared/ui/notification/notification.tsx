@@ -1,4 +1,7 @@
+"use client";
+
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import { TranslationKey, useI18n } from "@/shared/i18n";
 
 export const NotificationVariant = {
   Success: "success",
@@ -17,26 +20,29 @@ type NotificationProps = Omit<ComponentPropsWithoutRef<"div">, "title"> & {
 
 const variantStyles: Record<
   NotificationVariant,
-  { container: string; icon: string; label: string; symbol: string }
+  { container: string; icon: string; symbol: string }
 > = {
   success: {
     container: "border-emerald-400 bg-emerald-200 text-emerald-950",
     icon: "bg-emerald-300 text-emerald-800",
-    label: "Thành công",
     symbol: "✓",
   },
   warning: {
     container: "border-amber-200 bg-amber-50 text-amber-950",
     icon: "bg-amber-100 text-amber-700",
-    label: "Cảnh báo",
     symbol: "!",
   },
   error: {
     container: "border-red-400 bg-red-200 text-black",
     icon: "bg-red-300 text-black",
-    label: "Lỗi",
     symbol: "×",
   },
+};
+
+const variantLabelKeyMap: Record<NotificationVariant, TranslationKey> = {
+  success: TranslationKey.NotificationSuccessLabel,
+  warning: TranslationKey.NotificationWarningLabel,
+  error: TranslationKey.NotificationErrorLabel,
 };
 
 export function Notification({
@@ -47,6 +53,7 @@ export function Notification({
   className = "",
   ...props
 }: NotificationProps) {
+  const { t } = useI18n();
   const styles = variantStyles[variant];
 
   return (
@@ -64,13 +71,13 @@ export function Notification({
       </span>
 
       <div className="min-w-0 flex-1 text-sm leading-5">
-        <p className="m-0 font-semibold">{title ?? styles.label}</p>
+        <p className="m-0 font-semibold">{title ?? t(variantLabelKeyMap[variant])}</p>
         <div className="mt-0.5 text-current/80">{message}</div>
       </div>
 
       {onClose ? (
         <button
-          aria-label="Đóng thông báo"
+          aria-label={t(TranslationKey.CommonClose)}
           className="-mr-1 -mt-1 rounded-md px-1.5 py-1 text-lg leading-none opacity-70 transition hover:opacity-100 focus-visible:ring-2 focus-visible:ring-current focus-visible:outline-none"
           onClick={onClose}
           type="button"

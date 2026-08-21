@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, type SubmitEvent } from "react";
 import { CheckboxField, TextField } from "@/shared/ui/form";
 import { Button } from "@/shared/ui/button";
-import { t, TranslationKey } from "@/shared/i18n";
+import { TranslationKey, useI18n } from "@/shared/i18n";
 import { AuthDivider } from "./auth-divider";
 import { GoogleButton } from "./google-button";
 import { useNotification } from "@/shared/ui/notification/notification-context";
@@ -13,20 +13,21 @@ import { NotificationVariant } from "@/shared/ui/notification";
 import { login } from "../api/auth-api";
 import { Eye, EyeClosed } from "lucide-react";
 import {
-  validateLoginForm,
-  type LoginFormErrors,
+  validateLoginInput,
+  type LoginValidationErrors,
 } from "../validation/login-validation";
 
-export function LoginForm() {
+export function LoginView() {
   const { notify } = useNotification();
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<LoginFormErrors>({});
+  const [errors, setErrors] = useState<LoginValidationErrors>({});
 
   async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    const nextErrors = validateLoginForm({ email, password });
+    const nextErrors = validateLoginInput({ email, password }, t);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
@@ -35,7 +36,9 @@ export function LoginForm() {
       notify(response.message, NotificationVariant.Success);
     } catch (error) {
       notify(
-        error instanceof ApiError ? error.message : "Đăng nhập thất bại",
+        error instanceof ApiError
+          ? error.message
+          : t(TranslationKey.AuthLoginFallbackError),
         NotificationVariant.Error,
       );
     }
@@ -79,7 +82,11 @@ export function LoginForm() {
           onChange={(event) => setPassword(event.target.value)}
           endAdornment={
             <button
-              aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+              aria-label={
+                showPassword
+                  ? t(TranslationKey.AuthHidePassword)
+                  : t(TranslationKey.AuthShowPassword)
+              }
               className="text-muted transition hover:text-ink"
               onClick={() => setShowPassword((visible) => !visible)}
               type="button"
@@ -124,6 +131,5 @@ export function LoginForm() {
         </Link>
       </p>
     </div>
-
   );
 }

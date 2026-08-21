@@ -1,21 +1,29 @@
 import { TranslationKey } from "@/shared/i18n/translation-key";
 
-export type LoginInputValues = {
+export type RegisterInputValues = {
+  fullName: string;
   email: string;
   password: string;
+  acceptTerms: boolean;
 };
 
-export type LoginValidationErrors = Partial<
-  Record<keyof LoginInputValues, string>
+export type RegisterValidationErrors = Partial<
+  Record<keyof RegisterInputValues, string>
 >;
 
 type TranslateFn = (key: TranslationKey) => string;
 
-export function validateLoginInput({
+export function validateRegisterInput({
+  fullName,
   email,
   password,
-}: LoginInputValues, translate: TranslateFn): LoginValidationErrors {
-  const errors: LoginValidationErrors = {};
+  acceptTerms,
+}: RegisterInputValues, translate: TranslateFn): RegisterValidationErrors {
+  const errors: RegisterValidationErrors = {};
+
+  if (!fullName.trim()) {
+    errors.fullName = translate(TranslationKey.ValidationFullNameRequired);
+  }
 
   if (!email.trim()) {
     errors.email = translate(TranslationKey.ValidationEmailRequired);
@@ -44,6 +52,10 @@ export function validateLoginInput({
     if (passwordErrors.length > 0) {
       errors.password = passwordErrors.join("; ");
     }
+  }
+
+  if (!acceptTerms) {
+    errors.acceptTerms = translate(TranslationKey.ValidationAcceptTermsRequired);
   }
 
   return errors;

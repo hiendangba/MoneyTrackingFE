@@ -1,18 +1,40 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { CheckboxField, TextField } from "@/shared/ui/form";
 import { Button } from "@/shared/ui/button";
-import { t, TranslationKey } from "@/shared/i18n";
+import { TranslationKey, useI18n } from "@/shared/i18n";
 import { AuthDivider } from "./auth-divider";
 import { GoogleButton } from "./google-button";
+import {
+  validateRegisterInput,
+  type RegisterValidationErrors,
+} from "../validation/register-validation";
 
-export function RegisterForm() {
+export function RegisterView() {
+  const { t } = useI18n();
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [errors, setErrors] = useState<RegisterValidationErrors>({});
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function handleSubmit() {
+    const nextErrors = validateRegisterInput({
+      fullName,
+      email,
+      password,
+      acceptTerms,
+    }, t);
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      setFeedback("");
+      return;
+    }
+
     setFeedback(t(TranslationKey.AuthRegisterFeedback));
   }
 
@@ -33,37 +55,52 @@ export function RegisterForm() {
       <GoogleButton />
       <AuthDivider />
 
-      <form className="grid gap-3.5" onSubmit={handleSubmit}>
+      <div className="grid gap-3.5">
         <TextField
           autoComplete="name"
           id="full-name"
           label={t(TranslationKey.AuthFullName)}
           name="fullName"
+          onChange={(event) => {
+            setFullName(event.target.value);
+            setFeedback("");
+          }}
           placeholder="Nguyễn Văn An"
-          required
           type="text"
+          value={fullName}
+          error={errors.fullName}
         />
         <TextField
           autoComplete="email"
           id="register-email"
           label={t(TranslationKey.CommonEmail)}
           name="email"
+          onChange={(event) => {
+            setEmail(event.target.value);
+            setFeedback("");
+          }}
           placeholder="ban@example.com"
-          required
           type="email"
+          value={email}
+          error={errors.email}
         />
         <TextField
           autoComplete="new-password"
           id="register-password"
           label={t(TranslationKey.CommonPassword)}
-          minLength={8}
           name="password"
+          onChange={(event) => {
+            setPassword(event.target.value);
+            setFeedback("");
+          }}
           placeholder={t(TranslationKey.AuthNewPasswordPlaceholder)}
-          required
           type="password"
+          value={password}
+          error={errors.password}
         />
 
         <CheckboxField
+          checked={acceptTerms}
           id="terms"
           label={
             <>
@@ -85,10 +122,23 @@ export function RegisterForm() {
             </>
           }
           name="terms"
-          required
+          onChange={(event) => {
+            setAcceptTerms(event.target.checked);
+            setFeedback("");
+          }}
+          aria-invalid={errors.acceptTerms ? true : undefined}
         />
+        {errors.acceptTerms ? (
+          <p className="-mt-2 m-0 text-xs text-red-500" role="alert">
+            {errors.acceptTerms}
+          </p>
+        ) : null}
 
-        <Button type="submit" label={t(TranslationKey.AuthRegisterSubmit)} />
+        <Button
+          onClick={handleSubmit}
+          type="button"
+          label={t(TranslationKey.AuthRegisterSubmit)}
+        />
 
         {feedback ? (
           <p
@@ -98,7 +148,7 @@ export function RegisterForm() {
             {feedback}
           </p>
         ) : null}
-      </form>
+      </div>
 
       <p className="mt-5 text-center text-sm text-muted">
         {t(TranslationKey.AuthAlreadyHaveAccount)}{" "}

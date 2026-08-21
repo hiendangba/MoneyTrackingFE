@@ -1,29 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type SubmitEvent } from "react";
+import { useState } from "react";
 import { ApiError } from "@/shared/api";
-import { t, TranslationKey } from "@/shared/i18n";
+import { TranslationKey, useI18n } from "@/shared/i18n";
 import { Button } from "@/shared/ui/button";
 import { TextField } from "@/shared/ui/form";
 import { NotificationVariant } from "@/shared/ui/notification";
 import { useNotification } from "@/shared/ui/notification/notification-context";
 import { requestPasswordReset } from "../api/auth-api";
 import {
-  validateForgotPasswordForm,
-  type ForgotPasswordFormErrors,
+  validateForgotPasswordInput,
+  type ForgotPasswordValidationErrors,
 } from "../validation/forgot-password-validation";
 
-export function ForgotPasswordForm() {
+export function ForgotPasswordView() {
   const { notify } = useNotification();
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<ForgotPasswordFormErrors>({});
+  const [errors, setErrors] = useState<ForgotPasswordValidationErrors>({});
 
-  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const nextErrors = validateForgotPasswordForm({ email });
+  async function handleSubmit() {
+    const nextErrors = validateForgotPasswordInput({ email }, t);
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
@@ -61,7 +60,7 @@ export function ForgotPasswordForm() {
         </p>
       </header>
 
-      <form className="grid gap-3.5" noValidate onSubmit={handleSubmit}>
+      <div className="grid gap-3.5">
         <TextField
           autoComplete="email"
           id="forgot-password-email"
@@ -82,9 +81,10 @@ export function ForgotPasswordForm() {
               ? t(TranslationKey.AuthForgotPasswordSubmitting)
               : t(TranslationKey.AuthForgotPasswordSubmit)
           }
-          type="submit"
+          onClick={handleSubmit}
+          type="button"
         />
-      </form>
+      </div>
 
       <p className="mt-5 text-center text-sm text-muted">
         <Link

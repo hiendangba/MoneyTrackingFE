@@ -1,19 +1,24 @@
-export type ForgotPasswordFormValues = {
+import { TranslationKey } from "@/shared/i18n/translation-key";
+
+export type ForgotPasswordInputValues = {
   email: string;
 };
 
-export type ForgotPasswordFormErrors =
-    Partial<Record<keyof ForgotPasswordFormValues, string>>;
+export type ForgotPasswordValidationErrors = Partial<
+  Record<keyof ForgotPasswordInputValues, string>
+>;
 
-export function validateForgotPasswordForm({
+type TranslateFn = (key: TranslationKey) => string;
+
+export function validateForgotPasswordInput({
   email,
-}: ForgotPasswordFormValues): ForgotPasswordFormErrors {
-  const errors: ForgotPasswordFormErrors = {};
+}: ForgotPasswordInputValues, translate: TranslateFn): ForgotPasswordValidationErrors {
+  const errors: ForgotPasswordValidationErrors = {};
 
   if (!email.trim()) {
-    errors.email = "Vui lòng nhập email";
+    errors.email = translate(TranslationKey.ValidationEmailRequired);
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.email = "Email không hợp lệ";
+    errors.email = translate(TranslationKey.ValidationEmailInvalid);
   }
 
   return errors;

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { TranslationKey, useI18n } from "@/shared/i18n";
 import { Notification, NotificationVariant } from "./notification";
 
 type NotificationContextValue = {
@@ -12,17 +13,15 @@ type NotificationContextValue = {
 const NotificationContext = createContext<NotificationContextValue | undefined>(undefined);
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
+  const { t } = useI18n();
   const [feedback, setFeedback] = useState("");
   const [variant, setVariant] = useState<NotificationVariant>(NotificationVariant.Success);
   const [isDismissing, setIsDismissing] = useState(false);
 
   useEffect(() => {
     if (!feedback) {
-      setIsDismissing(false);
       return;
     }
-
-    setIsDismissing(false);
 
     const fadeTimer = window.setTimeout(() => {
       setIsDismissing(true);
@@ -43,6 +42,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     nextVariant: NotificationVariant = NotificationVariant.Success,
   ) => {
     setVariant(nextVariant);
+    setIsDismissing(false);
     setFeedback(message);
   };
 
@@ -67,7 +67,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
             transition: isDismissing ? "opacity 500ms ease-in-out" : undefined,
           }}
           onClose={clearNotification}
-          title="Thông báo"
+          title={t(TranslationKey.CommonNotificationTitle)}
           variant={variant}
         />
       )}

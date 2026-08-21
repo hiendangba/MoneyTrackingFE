@@ -1,3 +1,4 @@
+import { normalizeLocale, type AppLocale } from "./locale";
 import { TranslationKey } from "./translation-key";
 import { vietnameseTranslations } from "./vietnamese-translations";
 
@@ -21,6 +22,10 @@ function extractTranslationValue(response: TranslationApiResponse) {
   return response.value ?? response.translation ?? response.label;
 }
 
+export function getDefaultLocale(): AppLocale {
+  return normalizeLocale(process.env.NEXT_PUBLIC_DEFAULT_LOCALE, "vi");
+}
+
 export function resolveTranslation(
   key: TranslationKey,
   serviceValue?: string | null,
@@ -34,10 +39,11 @@ export function t(key: TranslationKey) {
 
 export async function getTranslation(
   key: TranslationKey,
-  locale = "vi",
+  locale: AppLocale = getDefaultLocale(),
   signal?: AbortSignal,
 ) {
-  const endpoint = process.env.NEXT_PUBLIC_TRANSLATION_API_URL;
+  const resolvedLocale = normalizeLocale(locale, getDefaultLocale());
+  const endpoint = process.env.NEXT_PUBLIC_TRANSLATION_API_URL?.trim();
 
   if (!endpoint) {
     return fallbackVietnamese(key);
@@ -46,7 +52,7 @@ export async function getTranslation(
   try {
     const url = new URL(endpoint);
     url.searchParams.set("key", key);
-    url.searchParams.set("locale", locale);
+    url.searchParams.set("locale", resolvedLocale);
 
     const response = await fetch(url, { signal });
 
