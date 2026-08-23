@@ -1,5 +1,5 @@
 import { TranslationKey } from "@/shared/i18n/translation-key";
-
+import type { TranslateFn } from "@/shared/i18n/type";
 export type LoginInputValues = {
   email: string;
   password: string;
@@ -9,7 +9,6 @@ export type LoginValidationErrors = Partial<
   Record<keyof LoginInputValues, string>
 >;
 
-type TranslateFn = (key: TranslationKey) => string;
 
 export function validateLoginInput({
   email,
@@ -42,7 +41,7 @@ export function validateLoginInput({
     }
 
     if (passwordErrors.length > 0) {
-      errors.password = passwordErrors.join("; ");
+      errors.password = passwordErrors.join(", ");
     }
   }
 

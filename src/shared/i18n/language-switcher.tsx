@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useI18n } from "./i18n-provider";
 import { SUPPORTED_LOCALES, type AppLocale } from "./locale";
 import { TranslationKey } from "./translation-key";
@@ -11,7 +10,6 @@ const localeLabelMap: Record<AppLocale, TranslationKey> = {
 };
 
 export function LanguageSwitcher() {
-  const router = useRouter();
   const { locale, setLocale, t } = useI18n();
 
   return (
@@ -28,18 +26,15 @@ export function LanguageSwitcher() {
             <button
               key={supportedLocale}
               aria-pressed={isActive}
-              className={`min-w-10 rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-wider transition ${
-                isActive
-                  ? "bg-[#f1e2d3] text-[#7b4a21]"
-                  : "text-[#7f746c] hover:text-ink"
-              } ${index > 0 ? "border-l border-[#e8dccf]" : ""}`}
+              className={`min-w-10 rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-wider transition ${isActive
+                ? "bg-[#f1e2d3] text-[#7b4a21]"
+                : "text-[#7f746c] hover:text-ink"
+                } ${index > 0 ? "border-l border-[#e8dccf]" : ""}`}
               onClick={() => {
                 if (supportedLocale === locale) {
                   return;
                 }
-
                 setLocale(supportedLocale);
-                router.refresh();
               }}
               type="button"
               title={t(localeLabelMap[supportedLocale])}

@@ -1,5 +1,5 @@
 import { TranslationKey } from "@/shared/i18n/translation-key";
-
+import type { TranslateFn } from "@/shared/i18n/type";
 export type ForgotPasswordInputValues = {
   email: string;
 };
@@ -8,7 +8,6 @@ export type ForgotPasswordValidationErrors = Partial<
   Record<keyof ForgotPasswordInputValues, string>
 >;
 
-type TranslateFn = (key: TranslationKey) => string;
 
 export function validateForgotPasswordInput({
   email,

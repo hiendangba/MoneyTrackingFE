@@ -1,4 +1,5 @@
 import { TranslationKey } from "@/shared/i18n/translation-key";
+import type { TranslateFn } from "@/shared/i18n/type";
 
 export type RegisterInputValues = {
   fullName: string;
@@ -11,7 +12,6 @@ export type RegisterValidationErrors = Partial<
   Record<keyof RegisterInputValues, string>
 >;
 
-type TranslateFn = (key: TranslationKey) => string;
 
 export function validateRegisterInput({
   fullName,
@@ -50,7 +50,7 @@ export function validateRegisterInput({
     }
 
     if (passwordErrors.length > 0) {
-      errors.password = passwordErrors.join("; ");
+      errors.password = passwordErrors.join(", ");
     }
   }
 

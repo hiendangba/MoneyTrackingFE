@@ -9,3 +9,4 @@ export {
 	normalizeLocale,
 	type AppLocale,
 } from "./locale";
+export type { TranslateFn } from "./type";
